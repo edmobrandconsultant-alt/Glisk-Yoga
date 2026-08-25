@@ -111,6 +111,38 @@ python3 -m http.server 8000
 
 Edit the HTML, refresh, commit, push. Cloudflare redeploys in about 30 seconds.
 
+### Where this is up to
+
+Working on this locally: `git clone`, then run Claude Code in the folder. The
+conventions are in `CLAUDE.md`, the booking system in `worker/README.md`, and the
+image spec in `IMAGES.md` — all three are read automatically.
+
+Done and working:
+
+- Seven pages, one stylesheet, no build step. Deploys as a Cloudflare Worker.
+- Booking with payment up front — clinic treatments, home visits and gift
+  vouchers, all through Stripe Checkout. `node worker/tests/run.mjs` covers it.
+- Home visits land as `awaiting_review` so Fleur confirms or refunds; travel is
+  priced from her postcode.
+- `admin.html` is her diary: bookings, working hours, days away.
+
+Waiting on files or answers from Fleur:
+
+- [ ] `assets/video/post-1.mp4` and `post-2.mp4` — the two Instagram videos. The
+      cards on the home page are built and are showing placeholder stills.
+- [ ] Real stills for those posts, plus a line of copy for each. All three
+      currently read "One line about what this one is."
+- [ ] Photos for the Gather Round and Campwell Woods entries on `guest-spots.html`.
+- [ ] Dates and locations for the guest spots.
+- [ ] A day rate and half-day rate for event work, for `guest-spots.html`.
+- [ ] A privacy notice and a retention period for the health information the
+      booking form collects. This one is a legal requirement, not a nicety.
+- [ ] Stripe keys. Until they are set the booking flow runs simulated end to end,
+      recording `payment_status = 'simulated'` so nothing looks like real money.
+
+Every one of these has a `.note` block on the page it belongs to:
+`grep -rn 'class="note"' *.html`
+
 ### The before-launch checklist
 
 - [ ] Remove every `.note` block — `grep -rn 'class="note"' *.html`
