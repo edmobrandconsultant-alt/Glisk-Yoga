@@ -19,7 +19,7 @@ about.html          about Fleur
 book.html           the booking calendar
 admin.html          Fleur's private diary (noindex, not in the sitemap)
 assets/css/style.css   the only stylesheet
-assets/js/             book.js, admin.js, voucher.js, instagram.js — vanilla, no deps
+assets/js/             book.js, admin.js, voucher.js, posts.js — vanilla, no deps
 assets/img/            photos, og images
 worker/                the booking API, D1 schema, and its tests
 robots.txt  sitemap.xml  _headers  wrangler.toml
@@ -36,9 +36,16 @@ elements, not scripts. Don't add JS to do what HTML already does.
 
 There are four scripts, all vanilla and all unavoidable: `book.js` (live
 availability and payment), `admin.js` (Fleur's diary), `voucher.js` (voucher
-purchase) and `instagram.js` (click-to-load embeds, which exist precisely so the
-site does not need a cookie banner). `book.html` degrades to a `<noscript>` block
-pointing at email and phone. If you find yourself adding a fifth, question it hard.
+purchase) and `posts.js` (twelve lines that hold the video controls back until
+someone presses play). `book.html` degrades to a `<noscript>` block pointing at
+email and phone, and the posts fall back to native controls. If you find yourself
+adding a fifth, question it hard.
+
+**The Instagram posts are self-hosted**, not embedded. Meta's embed script sets
+cookies, which would oblige the whole site to carry a cookie banner under PECR.
+Videos live in `assets/video/`, posters in `assets/img/`, and a native `<video>`
+with a `poster` does the preview-and-play on its own. Don't swap this back to an
+embed without accepting the banner that comes with it.
 
 **Design tokens live in `:root`** at the top of `style.css`. Change colours and fonts
 there, never inline. If you find yourself writing a hex code outside `:root`, stop.
