@@ -5,19 +5,24 @@ Owner: Fleur. Plain static HTML — no build step, no framework, no npm.
 
 ## What this is
 
-Five hand-written HTML pages sharing one stylesheet. Deployed to Cloudflare Pages
-by pushing to `main`. There is no build command and no `package.json`, and it should
-stay that way unless there's a real reason.
+Hand-written HTML pages sharing one stylesheet, plus a small booking system.
+Deployed to Cloudflare by pushing to `main`. There is no build command and no
+`package.json`, and it should stay that way unless there's a real reason.
 
 ```
 index.html          home
 treatments.html     treatments and prices
 home-visits.html    mobile massage + the women-only policy
+guest-spots.html    festivals, pop-ups, and event/corporate massage
 gift-vouchers.html  voucher sales
 about.html          about Fleur
+book.html           the booking calendar
+admin.html          Fleur's private diary (noindex, not in the sitemap)
 assets/css/style.css   the only stylesheet
+assets/js/             book.js and admin.js — vanilla, no dependencies
 assets/img/            photos, og images
-robots.txt  sitemap.xml  _headers
+worker/                the booking API, D1 schema, and its tests
+robots.txt  sitemap.xml  _headers  wrangler.toml
 ```
 
 ## Rules
@@ -26,18 +31,25 @@ robots.txt  sitemap.xml  _headers
 that set cookies. The site loads its own CSS and nothing else. This is deliberate:
 it keeps the site fast, private, and free of a cookie banner under PECR.
 
-**No JavaScript unless there is no alternative.** Everything currently works without it —
-the FAQ accordions are `<details>` elements. Don't add JS to do what HTML already does.
+**No JavaScript unless there is no alternative.** The FAQ accordions are `<details>`
+elements, not scripts. Don't add JS to do what HTML already does.
+
+There are exactly two scripts, both vanilla and both unavoidable: `assets/js/book.js`
+(live availability cannot be static HTML) and `assets/js/admin.js`. `book.html`
+degrades to a `<noscript>` block pointing at email and phone. If you find yourself
+adding a third script, question it hard.
 
 **Design tokens live in `:root`** at the top of `style.css`. Change colours and fonts
 there, never inline. If you find yourself writing a hex code outside `:root`, stop.
 
-**The nav and footer are duplicated across all five pages.** That's the cost of having
-no build step. If you change one, change all five — check with:
-`grep -c 'nav-links' *.html` should return 1 per page.
+**The nav and footer are duplicated across every page.** That's the cost of having
+no build step. If you change one, change them all — check with:
+`grep -c 'nav-links' *.html`, which should return 1 per page. `admin.html` is the
+one exception: it is private and carries no nav.
 
-**Editing prices means editing three places:** the page itself, the JSON-LD block in
-`index.html`, and any mention on other pages. Search for the number before you change it.
+**Editing prices means editing four places:** the page itself, the JSON-LD block in
+`index.html`, `worker/seed.sql`, and any mention on other pages. Search for the
+number before you change it.
 
 ## House style for copy
 
@@ -79,10 +91,25 @@ decoration and borders, `--gleam-deep` for anything that is text on a light back
   Validate at https://validator.schema.org/ after editing.
 - New page ⇒ add it to `sitemap.xml`.
 
+## Booking
+
+Bookings run through a Cloudflare Worker with the diary in D1. The full picture is
+in `worker/README.md`; the parts that matter when editing the site:
+
+- **Only clinic treatments are bookable online.** Home visits stay enquiry-only on
+  purpose — they need the conversation and deposit described on `home-visits.html`,
+  and an instant-booking button would bypass Fleur's own safeguarding process.
+- **Service names, durations and prices live in `worker/seed.sql` as well.** That is
+  a fourth place a price appears. Change it there too, or the booking page and the
+  treatments page will disagree.
+- **Run the tests after touching anything in `worker/`:** `node worker/tests/run.mjs`.
+  No install needed — they use `node:sqlite` and the real Worker handlers.
+
 ## Deploying
 
-Push to `main`. Cloudflare Pages builds and deploys automatically — build command
-empty, output directory `/`. See `README.md` for first-time setup.
+Push to `main`. Cloudflare builds and deploys automatically. The Worker serves the
+static files and handles `/api/*`; everything else is a plain file as before.
+See `README.md` and `worker/README.md` for first-time setup.
 
 ## Things deliberately not here
 

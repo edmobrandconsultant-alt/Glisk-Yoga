@@ -1,13 +1,36 @@
-# Preview-only deploy config. The production site is Cloudflare *Pages*
-# (see README.md); this publishes a throwaway copy to workers.dev so the
-# site can be viewed and shared before the domain exists.
+# Glisk — Worker serving the static site plus the booking API.
 #
 #   npx wrangler deploy
 #
-# Serves the repo as static assets. No build step, no dependencies.
+# Static files are served straight from the asset store; only /api/* reaches
+# the Worker. The site itself is still plain HTML with no build step.
+#
+# Before the first deploy, create the database and put its id below:
+#
+#   npx wrangler d1 create glisk-bookings
+#   npx wrangler d1 execute glisk-bookings --remote --file=worker/schema.sql
+#   npx wrangler d1 execute glisk-bookings --remote --file=worker/seed.sql
+#
+# Then the secrets:
+#
+#   npx wrangler secret put ADMIN_TOKEN      # any long random string
+#   npx wrangler secret put RESEND_API_KEY   # optional, for confirmation emails
+#
+# See worker/README.md for the whole run-through.
 
 name = "glisk-preview"
+main = "worker/index.js"
 compatibility_date = "2026-01-01"
 
 [assets]
 directory = "./"
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "glisk-bookings"
+database_id = "PUT-THE-DATABASE-ID-HERE"
+
+[vars]
+MAIL_FROM = "Glisk <hello@gliskmassage.co.uk>"
+OWNER_EMAIL = "hello@gliskmassage.co.uk"

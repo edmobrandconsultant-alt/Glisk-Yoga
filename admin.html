@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diary — Glisk Massage &amp; Yoga</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<main id="main">
+<header class="hero hero-sm">
+  <div class="wrap">
+    <div class="kicker">Private</div>
+    <h1>Your diary.</h1>
+    <p class="lede">Bookings, your working hours, and days you're away. Only you see this page.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div id="signin">
+      <h2>Sign in</h2>
+      <form class="bookform" id="signin-form">
+        <label>Password
+          <input type="password" name="token" autocomplete="current-password" required>
+          <span class="hint">The one set up when the booking system was installed.</span>
+        </label>
+        <button type="submit" class="btn">Sign in</button>
+        <p class="formerror" id="signin-error" role="alert" hidden></p>
+      </form>
+    </div>
+
+    <div id="panel" hidden>
+      <h2>Coming up</h2>
+      <p class="sec-intro" id="bookings-summary">Loading…</p>
+      <div id="bookings"></div>
+
+      <h2 style="margin-top:64px">Your working hours</h2>
+      <p class="sec-intro">Leave a day blank if you don't work it. Times are 24-hour, like 10:00 and 17:00.</p>
+      <form class="bookform" id="hours-form" style="max-width:640px"></form>
+      <div class="step-nav">
+        <button type="button" class="btn" id="save-hours">Save hours</button>
+        <span class="loading" id="hours-status" role="status" aria-live="polite"></span>
+      </div>
+
+      <h2 style="margin-top:64px">Days away</h2>
+      <p class="sec-intro">Festivals, holidays, guest spots — anything that should close the calendar.</p>
+      <form class="bookform" id="blackout-form" style="max-width:520px">
+        <label>From <input type="date" name="from" required></label>
+        <label>To <span class="opt">(inclusive)</span> <input type="date" name="to" required></label>
+        <label>Reason <span class="opt">(optional)</span> <input type="text" name="reason" maxlength="120"></label>
+        <button type="submit" class="btn">Add</button>
+      </form>
+      <div id="blackouts" style="margin-top:28px"></div>
+    </div>
+  </div>
+</section>
+</main>
+<script src="assets/js/admin.js" defer></script>
+</body>
+</html>

@@ -114,6 +114,12 @@ Edit the HTML, refresh, commit, push. Cloudflare redeploys in about 30 seconds.
 ### The before-launch checklist
 
 - [ ] Remove every `.note` block — `grep -rn 'class="note"' *.html`
+- [ ] Set up the booking system — `worker/README.md` has the run-through
+- [ ] Write a privacy notice and pick a retention period for the health notes
+      the booking form collects (see the note on `book.html`)
+- [ ] Remove the `noindex` tag from `book.html`
+- [ ] Put Cloudflare Access in front of `/admin.html` if you want it properly locked
+- [ ] Cancel the Booksy subscription once bookings are coming through the site
 - [ ] Add a real photo of Fleur, replacing both `.portrait` divs
 - [ ] Add `assets/img/og.jpg` (1200×630) or link previews will be blank
 - [ ] Confirm qualifications on `about.html`

@@ -223,3 +223,40 @@ footer a:hover,footer a:focus{color:var(--gleam-deep)}
   html{scroll-behavior:auto}
   *{transition:none!important;animation:none!important}
 }
+
+/* ------------------------------------------------------------- booking -- */
+.step-nav{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}
+.loading{font-family:var(--sans);font-size:14px;color:var(--muted);margin-top:20px}
+.muted-line{font-family:var(--sans);font-size:14px;color:var(--muted);margin-top:14px}
+.step h2:focus,.step h3:focus{outline:none}
+
+.slot-days{display:flex;flex-direction:column;gap:30px}
+.slot-day h3{font-size:18px;margin-bottom:12px;color:var(--ink)}
+.slot-list{display:flex;flex-wrap:wrap;gap:10px}
+.slot{font-family:var(--sans);font-size:14.5px;background:var(--card);
+  border:1px solid var(--line);color:var(--ink);padding:11px 16px;border-radius:2px;
+  cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+.slot:hover{border-color:var(--gleam);color:var(--gleam-deep)}
+.slot:focus-visible,.btn:focus-visible,.slot-day .slot:focus-visible{
+  outline:2px solid var(--gleam-deep);outline-offset:2px}
+
+.bookform{max-width:520px;display:flex;flex-direction:column;gap:22px;margin-top:8px}
+.bookform label{display:flex;flex-direction:column;gap:7px;font-family:var(--sans);
+  font-size:14px;letter-spacing:.04em;color:var(--ink)}
+.bookform .opt{color:var(--muted);letter-spacing:0}
+.bookform input,.bookform textarea{font-family:var(--serif);font-size:17px;
+  padding:12px 14px;border:1px solid var(--line);background:var(--card);
+  color:var(--ink);border-radius:2px;width:100%}
+.bookform input:focus,.bookform textarea:focus{outline:2px solid var(--gleam-deep);
+  outline-offset:1px;border-color:var(--gleam)}
+.bookform .hint{font-size:13px;color:var(--muted);letter-spacing:0}
+.formerror{font-family:var(--sans);font-size:14.5px;color:var(--warn-ink);
+  background:var(--warn-bg);border:1px solid var(--warn-line);padding:12px 14px;
+  border-radius:2px;margin-top:18px}
+/* spam trap — off-screen rather than display:none, which some bots skip */
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+@media(prefers-reduced-motion:reduce){
+  .slot,.btn{transition:none}
+  html{scroll-behavior:auto}
+}

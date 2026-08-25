@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book a Massage in Bristol — Deep Tissue &amp; Relaxation | Glisk</title>
+<meta name="description" content="Book deep tissue or relaxation massage at St Anne's House, Brislington, Bristol. Pick a treatment and a time, and pay on the day. 60 min £60, 90 min £85.">
+<link rel="canonical" href="https://gliskmassage.co.uk/book.html">
+<meta name="robots" content="noindex" data-note="remove once the booking system is live on the real domain">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Book a Massage in Bristol — Deep Tissue &amp; Relaxation | Glisk">
+<meta property="og:description" content="Pick a treatment and a time at St Anne's House, Brislington.">
+<meta property="og:url" content="https://gliskmassage.co.uk/book.html">
+<meta property="og:image" content="https://gliskmassage.co.uk/assets/img/og.jpg">
+<meta property="og:locale" content="en_GB">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<a href="#main" class="skip">Skip to content</a>
+
+<nav>
+  <div class="nav-in">
+    <a href="index.html" class="logo">Glis<span>k</span></a>
+    <div class="nav-links">
+      <a href="treatments.html">Treatments</a>
+      <a href="home-visits.html">Home visits</a>
+      <a href="guest-spots.html">Guest spots</a>
+      <a href="gift-vouchers.html">Gift vouchers</a>
+      <a href="about.html">About</a>
+      <a href="book.html" class="btn" aria-current="page">Book</a>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+
+<header class="hero hero-sm">
+  <div class="wrap">
+    <div class="kicker">St Anne's House · Brislington, Bristol</div>
+    <h1>Book a treatment.</h1>
+    <p class="lede">Pick what you'd like and when suits. Nothing to pay now — you settle up on the day, by card or cash.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+
+    <noscript>
+      <div class="policy">
+        <h3>Booking needs JavaScript</h3>
+        <p>The booking calendar needs JavaScript to show live availability. If you'd rather not turn it on, that's completely fine — <a href="mailto:hello@gliskmassage.co.uk">email me</a> or call <a href="tel:07709264201">07709 264 201</a> and we'll sort a time between us.</p>
+      </div>
+    </noscript>
+
+    <div class="note">
+      <strong>Draft note for Fleur:</strong> the booking form asks "anything I should know?", and people will answer it with injuries, pregnancies and medical history. That is special-category health data under UK GDPR, so before this goes live on the real domain you need two things: a short privacy notice saying what you collect, why, how long you keep it and who else sees it (nobody), and a decision on how long "how long" is — I'd suggest deleting notes for clients you haven't seen in two years. Tell me the retention period and I'll wire the deletion up. Also remove the noindex tag in the head of this page when you're ready to be found.
+    </div>
+
+    <div id="booking" data-booking hidden>
+
+      <!-- step 1 -->
+      <div class="step" data-step="service">
+        <h2>What would you like?</h2>
+        <p class="sec-intro">Both are the same hour of attention. The difference is pressure and pace.</p>
+        <div class="cards" id="services" role="list"></div>
+      </div>
+
+      <!-- step 2 -->
+      <div class="step" data-step="when" hidden>
+        <h2>When suits?</h2>
+        <p class="sec-intro" id="when-intro"></p>
+        <div class="slot-days" id="days"></div>
+        <p class="muted-line" id="no-slots" hidden>Nothing free in this stretch. Try further ahead, or <a href="mailto:hello@gliskmassage.co.uk">email me</a> and we'll find something.</p>
+        <div class="step-nav">
+          <button type="button" class="btn btn-ghost" data-back="service">Back</button>
+          <button type="button" class="btn btn-ghost" id="more-days">Show more dates</button>
+        </div>
+      </div>
+
+      <!-- step 3 -->
+      <div class="step" data-step="details" hidden>
+        <h2>Nearly there.</h2>
+        <p class="sec-intro" id="chosen-summary"></p>
+        <form id="details-form" class="bookform" novalidate>
+          <label>Your name
+            <input type="text" name="name" autocomplete="name" required maxlength="80">
+          </label>
+          <label>Email
+            <input type="email" name="email" autocomplete="email" required maxlength="160">
+            <span class="hint">So I can send you a confirmation.</span>
+          </label>
+          <label>Phone <span class="opt">(optional)</span>
+            <input type="tel" name="phone" autocomplete="tel" maxlength="40">
+          </label>
+          <label>Anything I should know? <span class="opt">(optional)</span>
+            <textarea name="notes" rows="4" maxlength="800"></textarea>
+            <span class="hint">Injuries, recent surgery, pregnancy, areas to avoid — whatever is useful. Kept only as long as you're a client, and never shared.</span>
+          </label>
+          <!-- spam trap; a person never sees or fills this -->
+          <div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+
+          <div class="step-nav">
+            <button type="button" class="btn btn-ghost" data-back="when">Back</button>
+            <button type="submit" class="btn btn-lg" id="confirm">Confirm booking</button>
+          </div>
+          <p class="formerror" id="form-error" role="alert" hidden></p>
+        </form>
+      </div>
+
+      <!-- done -->
+      <div class="step" data-step="done" hidden>
+        <div class="policy">
+          <h3 id="done-head">You're booked in.</h3>
+          <p id="done-detail"></p>
+          <p id="done-ref" class="muted-line"></p>
+        </div>
+      </div>
+
+      <!-- manage an existing booking -->
+      <div class="step" data-step="manage" hidden>
+        <h2>Your booking</h2>
+        <div class="policy">
+          <p id="manage-detail"></p>
+          <div class="step-nav">
+            <button type="button" class="btn btn-ghost" id="cancel-booking">Cancel this booking</button>
+          </div>
+          <p class="muted-line">Please give 24 hours' notice where you can, so the slot can go to someone else.</p>
+        </div>
+      </div>
+
+      <p class="loading" id="loading" role="status" aria-live="polite"></p>
+    </div>
+
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <h2>A few things worth knowing</h2>
+    <ul class="ticks" style="max-width:680px;margin-top:0">
+      <li><strong>Nothing to pay now.</strong> You settle up on the day, card or cash.</li>
+      <li><strong>Arrive five minutes early</strong> if you can. It's a community building — come to the main door and I'll meet you.</li>
+      <li><strong>24 hours' notice</strong> to move or cancel, so the slot can go to someone else. Life happens, and I'm reasonable about it.</li>
+      <li><strong>Home visits aren't booked here.</strong> They need a short conversation first — see <a href="home-visits.html">home visits</a>.</li>
+      <li><strong>Yoga and Bath treatments</strong> are arranged directly. <a href="mailto:hello@gliskmassage.co.uk">Email me</a>.</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-in">
+    <div>© 2026 Glisk — Massage &amp; Yoga · Bristol &amp; Bath</div>
+    <div>
+      <a href="treatments.html">Treatments</a> ·
+      <a href="home-visits.html">Home visits</a> ·
+      <a href="guest-spots.html">Guest spots</a> ·
+      <a href="gift-vouchers.html">Vouchers</a> ·
+      <a href="https://www.instagram.com/glisk_massage_yoga">Instagram</a> ·
+      <a href="tel:07709264201">07709 264 201</a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/book.js" defer></script>
+</body>
+</html>
