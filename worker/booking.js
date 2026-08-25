@@ -39,7 +39,29 @@ export function blocksFor(startUtc, endUtc, bufferMin) {
  * A candidate survives if it fits inside a working window, clears the notice
  * period, misses every blackout, and collides with no occupied block.
  */
+/**
+ * Release slots held by checkouts nobody completed.
+ *
+ * A booking holds its slot from the moment the payment page opens, otherwise two
+ * people could pay for the same hour. Abandoned checkouts would hold it forever,
+ * so anything still 'pending' past its expiry is swept before availability is
+ * calculated or a new booking is taken.
+ */
+export async function sweepExpired(db, nowMs) {
+  const { results } = await db
+    .prepare("SELECT id FROM bookings WHERE status = 'pending' AND expires_utc IS NOT NULL AND expires_utc < ?1")
+    .bind(nowMs).all();
+  if (!results?.length) return 0;
+
+  await db.batch([
+    ...results.map(r => db.prepare('DELETE FROM occupancy WHERE booking_id = ?1').bind(r.id)),
+    ...results.map(r => db.prepare("UPDATE bookings SET status = 'expired' WHERE id = ?1").bind(r.id)),
+  ]);
+  return results.length;
+}
+
 export async function generateSlots(db, service, fromKey, days, nowMs) {
+  await sweepExpired(db, nowMs);
   const s = await loadSettings(db);
   const from = parseDateKey(fromKey);
   if (!from) throw new HttpError(400, 'Bad date');

@@ -19,7 +19,7 @@ about.html          about Fleur
 book.html           the booking calendar
 admin.html          Fleur's private diary (noindex, not in the sitemap)
 assets/css/style.css   the only stylesheet
-assets/js/             book.js and admin.js — vanilla, no dependencies
+assets/js/             book.js, admin.js, voucher.js, instagram.js — vanilla, no deps
 assets/img/            photos, og images
 worker/                the booking API, D1 schema, and its tests
 robots.txt  sitemap.xml  _headers  wrangler.toml
@@ -34,10 +34,11 @@ it keeps the site fast, private, and free of a cookie banner under PECR.
 **No JavaScript unless there is no alternative.** The FAQ accordions are `<details>`
 elements, not scripts. Don't add JS to do what HTML already does.
 
-There are exactly two scripts, both vanilla and both unavoidable: `assets/js/book.js`
-(live availability cannot be static HTML) and `assets/js/admin.js`. `book.html`
-degrades to a `<noscript>` block pointing at email and phone. If you find yourself
-adding a third script, question it hard.
+There are four scripts, all vanilla and all unavoidable: `book.js` (live
+availability and payment), `admin.js` (Fleur's diary), `voucher.js` (voucher
+purchase) and `instagram.js` (click-to-load embeds, which exist precisely so the
+site does not need a cookie banner). `book.html` degrades to a `<noscript>` block
+pointing at email and phone. If you find yourself adding a fifth, question it hard.
 
 **Design tokens live in `:root`** at the top of `style.css`. Change colours and fonts
 there, never inline. If you find yourself writing a hex code outside `:root`, stop.
@@ -96,12 +97,18 @@ decoration and borders, `--gleam-deep` for anything that is text on a light back
 Bookings run through a Cloudflare Worker with the diary in D1. The full picture is
 in `worker/README.md`; the parts that matter when editing the site:
 
-- **Only clinic treatments are bookable online.** Home visits stay enquiry-only on
-  purpose — they need the conversation and deposit described on `home-visits.html`,
-  and an instant-booking button would bypass Fleur's own safeguarding process.
+- **Everything is paid for up front** — clinic treatments, home visits and gift
+  vouchers, all through Stripe Checkout. No card details touch this domain.
+- **Home visits are bookable, but land as `awaiting_review`.** The money is taken;
+  Fleur then confirms or refunds in full from her diary. The women-only policy on
+  `home-visits.html` still applies and is stated before anyone pays.
+- **Home visits carry a travel charge** worked out from the client's postcode. All
+  the numbers live in the `settings` table, not in code — see `worker/README.md`.
 - **Service names, durations and prices live in `worker/seed.sql` as well.** That is
   a fourth place a price appears. Change it there too, or the booking page and the
   treatments page will disagree.
+- **Until Stripe keys are set the flow runs simulated**, recording
+  `payment_status = 'simulated'` so test bookings can never look like real money.
 - **Run the tests after touching anything in `worker/`:** `node worker/tests/run.mjs`.
   No install needed — they use `node:sqlite` and the real Worker handlers.
 

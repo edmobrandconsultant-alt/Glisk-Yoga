@@ -67,22 +67,73 @@
 
   // ---- bookings ------------------------------------------------------------
 
+  var money = function (p) { return '£' + (p / 100).toFixed(2); };
+
   function loadBookings() {
     api('/api/admin/bookings').then(function (data) {
-      var live = data.bookings.filter(function (b) { return b.status === 'confirmed'; });
+      var live = data.bookings.filter(function (b) {
+        return b.status === 'confirmed' || b.status === 'awaiting_review';
+      });
+      var waiting = live.filter(function (b) { return b.status === 'awaiting_review'; });
+
       document.getElementById('bookings-summary').textContent =
-        live.length ? live.length + ' booking' + (live.length === 1 ? '' : 's') + ' from today onwards.'
-                    : 'Nothing booked yet.';
+        (live.length ? live.length + ' booking' + (live.length === 1 ? '' : 's') + ' from today onwards.'
+                     : 'Nothing booked yet.')
+        + (waiting.length ? '  ' + waiting.length + ' home visit'
+            + (waiting.length === 1 ? '' : 's') + ' waiting for you to confirm or refund.' : '');
+
+      // Anything waiting on Fleur goes first — it is the only thing here that
+      // needs an action rather than just reading.
+      live.sort(function (a, b) {
+        if ((a.status === 'awaiting_review') !== (b.status === 'awaiting_review')) {
+          return a.status === 'awaiting_review' ? -1 : 1;
+        }
+        return a.start_utc - b.start_utc;
+      });
+
       document.getElementById('bookings').innerHTML = live.map(function (b) {
-        return '<div class="place" style="margin-bottom:14px">'
-          + '<div class="city">' + esc(fmtWhen(b.start_utc)) + '</div>'
+        var review = b.status === 'awaiting_review';
+        var paid = b.payment_status === 'paid' ? money(b.amount_pence) + ' paid'
+                 : b.payment_status === 'simulated' ? money(b.amount_pence) + ' (test payment)'
+                 : b.payment_status;
+        return '<div class="place" style="margin-bottom:14px' + (review ? ';border-left:3px solid var(--gleam)' : '') + '">'
+          + '<div class="city">' + esc(fmtWhen(b.start_utc)) + (review ? ' · needs you' : '') + '</div>'
           + '<h3>' + esc(b.name) + ' — ' + esc(b.service_name) + '</h3>'
-          + '<p>' + esc(b.email) + (b.phone ? ' · ' + esc(b.phone) : '')
+          + '<p>' + esc(paid) + '<br>' + esc(b.email) + (b.phone ? ' · ' + esc(b.phone) : '')
+          + (b.address ? '<br><strong>Address:</strong> ' + esc(b.address) : '')
           + (b.notes ? '<br><strong>Notes:</strong> ' + esc(b.notes) : '')
-          + '<br><span class="muted-line">Ref ' + esc(b.ref) + '</span></p></div>';
+          + '<br><span class="muted-line">Ref ' + esc(b.ref) + '</span></p>'
+          + (review
+              ? '<div class="step-nav" style="margin-top:12px">'
+                + '<button type="button" class="btn" data-approve="' + esc(b.id) + '">Confirm this visit</button>'
+                + '<button type="button" class="btn btn-ghost" data-refund="' + esc(b.id) + '">Refund and decline</button>'
+                + '</div>'
+              : '')
+          + '</div>';
       }).join('') || '';
     }).catch(function (err) { document.getElementById('bookings-summary').textContent = err.message; });
   }
+
+  document.getElementById('bookings').addEventListener('click', function (event) {
+    var approve = event.target.closest('[data-approve]');
+    var decline = event.target.closest('[data-refund]');
+    if (!approve && !decline) return;
+
+    var id = (approve || decline).getAttribute(approve ? 'data-approve' : 'data-refund');
+    if (approve) {
+      if (!window.confirm('Confirm this home visit? They get an email saying you are coming.')) return;
+      api('/api/admin/bookings/' + id + '/approve', { method: 'POST' })
+        .then(loadBookings).catch(function (e) { window.alert(e.message); });
+      return;
+    }
+
+    var reason = window.prompt('Refund and decline. Anything you want to say to them? (optional)');
+    if (reason === null) return;
+    api('/api/admin/bookings/' + id + '/refund', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ reason: reason }),
+    }).then(loadBookings).catch(function (e) { window.alert(e.message); });
+  });
 
   // ---- working hours -------------------------------------------------------
 

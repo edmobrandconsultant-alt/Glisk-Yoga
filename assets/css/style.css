@@ -272,3 +272,7 @@ footer a:hover,footer a:focus{color:var(--gleam-deep)}
 .ig-card .btn{margin-top:4px}
 .ig-alt{font-family:var(--sans);font-size:13.5px;flex:0}
 .ig-card .instagram-media{margin:0 auto !important;min-width:0 !important}
+.travelline{font-family:var(--sans);font-size:14.5px;color:var(--gleam-deep);
+  background:var(--paper-2);border:1px solid var(--gleam-soft);padding:12px 14px;
+  border-radius:2px}
+.travelline.is-problem{color:var(--warn-ink);background:var(--warn-bg);border-color:var(--warn-line)}

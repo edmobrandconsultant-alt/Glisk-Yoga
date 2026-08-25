@@ -78,8 +78,7 @@
         <div class="amount">£60</div>
         <div class="what">One hour</div>
         <p>A full sixty-minute treatment. The standard gift, and the right one if you are not sure.</p>
-        <!-- EDIT: replace # with your Square gift card link -->
-        <a href="#" class="btn">Buy this voucher</a>
+        <button type="button" class="btn" data-voucher="6000">Buy this voucher</button>
       </div>
 
       <div class="tier card-feature">
@@ -87,24 +86,53 @@
         <div class="amount">£85</div>
         <div class="what">Ninety minutes</div>
         <p>The one I would choose. Long enough to work properly and long enough for them to genuinely switch off, rather than just start to.</p>
-        <a href="#" class="btn">Buy this voucher</a>
+        <button type="button" class="btn" data-voucher="8500">Buy this voucher</button>
       </div>
 
       <div class="tier">
         <div class="amount">£170</div>
         <div class="what">Two ninety-minute treatments</div>
         <p>For someone going through something — a new baby, a hard year, chemotherapy, grief. One massage is lovely. Two is looking after them.</p>
-        <a href="#" class="btn">Buy this voucher</a>
+        <button type="button" class="btn" data-voucher="17000">Buy this voucher</button>
       </div>
     </div>
 
-    <div class="policy" style="margin-top:40px">
-      <h3>Any other amount</h3>
-      <p>If several of you are chipping in, or you want to put something towards a treatment rather than cover the whole thing, just <a href="mailto:hello@gliskmassage.co.uk">email me</a> and I will set it up. Vouchers can be part-used — if a £40 voucher goes towards a £60 treatment, they pay the difference on the day.</p>
+    <div id="voucher-buy" hidden style="margin-top:40px">
+      <h3 id="voucher-heading">Your voucher</h3>
+      <form class="bookform" id="voucher-form" novalidate>
+        <label>Amount
+          <input type="text" name="amount" inputmode="decimal" required>
+          <span class="hint">Anything from £20 to £500. Vouchers can be part-used — if a £40 voucher goes towards a £60 treatment, they pay the difference on the day.</span>
+        </label>
+        <label>Your name
+          <input type="text" name="buyer_name" autocomplete="name" required maxlength="80">
+        </label>
+        <label>Your email
+          <input type="email" name="buyer_email" autocomplete="email" required maxlength="160">
+          <span class="hint">The voucher comes to you, so you can pass it on however you like.</span>
+        </label>
+        <label>Who is it for? <span class="opt">(optional)</span>
+          <input type="text" name="recipient_name" maxlength="80">
+        </label>
+        <label>A message on it <span class="opt">(optional)</span>
+          <textarea name="message" rows="3" maxlength="400"></textarea>
+        </label>
+        <div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <div class="step-nav">
+          <button type="submit" class="btn btn-lg" id="voucher-submit">Continue to payment</button>
+        </div>
+        <p class="formerror" id="voucher-error" role="alert" hidden></p>
+      </form>
     </div>
 
-    <div class="note">
-      <strong>Draft note for Fleur:</strong> the three "Buy this voucher" buttons currently link nowhere. Set up Square eGift Cards (free, no monthly fee, 1.4% + 25p per sale) and paste the three checkout links in. See the gifting plan for the step-by-step. Until then, change the buttons to "Email me for a voucher".
+    <div class="policy" id="voucher-done" hidden style="margin-top:40px">
+      <h3 id="voucher-done-head">Thank you.</h3>
+      <p id="voucher-done-detail"></p>
+    </div>
+
+    <div class="policy" style="margin-top:40px">
+      <h3>Several of you chipping in?</h3>
+      <p>Pick any amount above and put the whole lot on one voucher, or buy a few smaller ones. If you would rather sort it between you first, <a href="mailto:hello@gliskmassage.co.uk">email me</a> and I will set it up by hand.</p>
     </div>
   </div>
 </section>
@@ -173,7 +201,7 @@
 <section class="book">
   <h2>Give someone an hour</h2>
   <p>Emailed within minutes, valid for a year, and impossible to get the wrong size.</p>
-  <a href="#" class="btn btn-lg">Buy a gift voucher</a>
+  <a href="#voucher-buy" class="btn btn-lg" data-voucher="8500">Buy a gift voucher</a>
   <a href="mailto:hello@gliskmassage.co.uk" class="phone">or email me if you'd rather arrange it directly</a>
 </section>
 
@@ -193,5 +221,6 @@
   </div>
 </footer>
 
+<script src="assets/js/voucher.js" defer></script>
 </body>
 </html>

@@ -38,7 +38,7 @@
   <div class="wrap">
     <div class="kicker">St Anne's House · Brislington, Bristol</div>
     <h1>Book a treatment.</h1>
-    <p class="lede">Pick what you'd like and when suits. Nothing to pay now — you settle up on the day, by card or cash.</p>
+    <p class="lede">Pick what you'd like and when suits, and pay by card. That's the whole thing — nothing to settle on the day.</p>
   </div>
 </header>
 
@@ -81,6 +81,12 @@
       <div class="step" data-step="details" hidden>
         <h2>Nearly there.</h2>
         <p class="sec-intro" id="chosen-summary"></p>
+        <div class="policy" id="home-notice" hidden style="margin-bottom:28px">
+          <h3>Before you pay for a home visit</h3>
+          <p><strong>Home visits are for women only.</strong> I work alone and go into strangers' houses by myself, and this is the arrangement that lets me keep offering them. Treatments at St Anne's House are open to everybody — <a href="home-visits.html">the reasoning is here</a>.</p>
+          <p>You pay now and I'll be in touch shortly to check a few details before the visit. If it turns out I can't come, <strong>you get a full refund straight away</strong>.</p>
+        </div>
+
         <form id="details-form" class="bookform" novalidate>
           <label>Your name
             <input type="text" name="name" autocomplete="name" required maxlength="80">
@@ -92,6 +98,15 @@
           <label>Phone <span class="opt">(optional)</span>
             <input type="tel" name="phone" autocomplete="tel" maxlength="40">
           </label>
+          <label id="postcode-field" hidden>Postcode
+            <input type="text" name="postcode" autocomplete="postal-code" maxlength="10" style="max-width:180px">
+            <span class="hint">I set off from Hanham. The first five miles are included; beyond that there is a small travel charge, worked out from your postcode and added below before you pay.</span>
+          </label>
+          <p class="travelline" id="travel-line" role="status" aria-live="polite" hidden></p>
+          <label id="address-field" hidden>Address for the visit
+            <textarea name="address" rows="3" maxlength="300"></textarea>
+            <span class="hint">Street and house number, plus anything useful about parking.</span>
+          </label>
           <label>Anything I should know? <span class="opt">(optional)</span>
             <textarea name="notes" rows="4" maxlength="800"></textarea>
             <span class="hint">Injuries, recent surgery, pregnancy, areas to avoid — whatever is useful. Kept only as long as you're a client, and never shared.</span>
@@ -101,7 +116,7 @@
 
           <div class="step-nav">
             <button type="button" class="btn btn-ghost" data-back="when">Back</button>
-            <button type="submit" class="btn btn-lg" id="confirm">Confirm booking</button>
+            <button type="submit" class="btn btn-lg" id="confirm">Continue to payment</button>
           </div>
           <p class="formerror" id="form-error" role="alert" hidden></p>
         </form>
@@ -138,10 +153,10 @@
   <div class="wrap">
     <h2>A few things worth knowing</h2>
     <ul class="ticks" style="max-width:680px;margin-top:0">
-      <li><strong>Nothing to pay now.</strong> You settle up on the day, card or cash.</li>
+      <li><strong>You pay when you book.</strong> Card only, and the treatment is then settled — nothing to sort out on the day.</li>
       <li><strong>Arrive five minutes early</strong> if you can. It's a community building — come to the main door and I'll meet you.</li>
-      <li><strong>24 hours' notice</strong> to move or cancel, so the slot can go to someone else. Life happens, and I'm reasonable about it.</li>
-      <li><strong>Home visits aren't booked here.</strong> They need a short conversation first — see <a href="home-visits.html">home visits</a>.</li>
+      <li><strong>Cancel any time and you're refunded in full</strong>, straight back to your card. Twenty-four hours' notice where you can, so the slot can go to someone else.</li>
+      <li><strong>Home visits are women only</strong>, and I check a few details with you after you book. If I can't come, you're refunded in full — see <a href="home-visits.html">home visits</a>.</li>
       <li><strong>Yoga and Bath treatments</strong> are arranged directly. <a href="mailto:hello@gliskmassage.co.uk">Email me</a>.</li>
     </ul>
   </div>

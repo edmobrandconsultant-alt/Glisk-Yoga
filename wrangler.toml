@@ -13,8 +13,14 @@
 #
 # Then the secrets:
 #
-#   npx wrangler secret put ADMIN_TOKEN      # any long random string
-#   npx wrangler secret put RESEND_API_KEY   # optional, for confirmation emails
+#   npx wrangler secret put ADMIN_TOKEN            # any long random string
+#   npx wrangler secret put RESEND_API_KEY         # optional, for confirmation emails
+#   npx wrangler secret put STRIPE_SECRET_KEY      # when you are ready to take money
+#   npx wrangler secret put STRIPE_WEBHOOK_SECRET  # from the Stripe webhook you create
+#
+# Until STRIPE_SECRET_KEY is set the site runs the same flow with a simulated
+# checkout: payments are recorded as 'simulated', never as 'paid', and the
+# simulate endpoint disappears the moment a real key is present.
 #
 # See worker/README.md for the whole run-through.
 

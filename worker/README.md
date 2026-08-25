@@ -3,11 +3,18 @@
 Bookings for treatments at St Anne's House. Runs as a Cloudflare Worker in front
 of the static site, with the diary in D1 (Cloudflare's SQLite).
 
-Home visits are deliberately **not** bookable here. They need the conversation
-and the deposit described on `home-visits.html`, and putting them behind an
-instant-booking button would quietly bypass Fleur's own safeguarding process.
-Yoga and Bath treatments are enquiry-only for the same sort of reason — the
-availability isn't fixed enough to publish.
+Everything that can be paid for is paid for up front: clinic treatments, home
+visits, and gift vouchers.
+
+Home visits are bookable and charged like anything else, but they are flagged
+`requires_review`, so a paid home visit lands as **awaiting_review** rather than
+confirmed. Fleur reads the details in her diary and either confirms it or
+refunds it in full with one button. That keeps payment frictionless without
+pretending the women-only policy on `home-visits.html` has stopped applying —
+and the booking page says all of this before anyone pays.
+
+Yoga and Bath treatments stay enquiry-only: the availability isn't fixed enough
+to publish.
 
 ## How it fits together
 
@@ -34,6 +41,52 @@ booking row with partial occupancy, and never two people in the same hour.
 
 Blocks are aligned to the epoch rather than to the working day, so the same
 instant always maps to the same block no matter which code path computes it.
+
+## Money
+
+Payment is Stripe Checkout, so no card details ever touch this code or this
+domain. The flow is:
+
+1. The slot is held the moment someone reaches the payment page, so two people
+   cannot pay for the same hour.
+2. If they never pay, the hold expires after twenty minutes and `sweepExpired`
+   hands the time back. Abandoned checkouts cannot silently block the diary.
+3. The Stripe webhook — not the browser redirect — is what confirms a booking.
+   A redirect only means the customer came back; the webhook means the money
+   arrived.
+4. Cancelling refunds in full, and only then releases the slot. If the refund
+   fails the booking stays put, so the money and the hour never get out of step.
+
+**Until `STRIPE_SECRET_KEY` is set**, exactly the same flow runs against a
+simulated checkout, so all of it can be walked end to end without a Stripe
+account. Simulated payments are recorded as `payment_status = 'simulated'`,
+never `'paid'`, so test bookings can never be mistaken for money — and
+`/api/simulate-payment` returns 404 as soon as a real key exists.
+
+To go live: create the Stripe account, add the two secrets, and add a webhook
+endpoint pointing at `https://gliskmassage.co.uk/api/stripe/webhook` for the
+`checkout.session.completed` event. Nothing in the code changes.
+
+## Travel for home visits
+
+Fleur sets off from Hanham. The first few miles are included; beyond that, the
+miles *past* that radius are charged one way at a flat rate. The postcode is
+geocoded through [postcodes.io](https://postcodes.io) (free, no key, Ordnance
+Survey data) and cached, and the distance is straight-line — road miles run
+longer, so this errs in the client's favour rather than overcharging on a figure
+nobody can check.
+
+Every number is a row in `settings`, so the rule changes without touching code:
+
+| setting | default | what it does |
+|---|---|---|
+| `travel_free_miles` | `5` | miles included before anything is charged |
+| `travel_rate_pence` | `45` | pence per chargeable mile, one way |
+| `travel_max_miles` | `25` | beyond this, she doesn't travel |
+| `travel_origin_lat` / `_lon` | Hanham | where she sets off from |
+
+The price shown on the booking page is only a preview; the charge is always
+recomputed on the server when the booking is taken.
 
 ## Times
 

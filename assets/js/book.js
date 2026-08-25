@@ -25,7 +25,12 @@
     more: document.getElementById('more-days'),
   };
 
-  var money = function (pence) { return '£' + (pence / 100).toFixed(0); };
+  // Whole pounds stay clean (£60); anything with pence shows them (£75.95).
+  // Travel charges are rarely round, and a rounded figure here would not match
+  // what the card is actually charged.
+  var money = function (pence) {
+    return '£' + (pence % 100 === 0 ? (pence / 100).toFixed(0) : (pence / 100).toFixed(2));
+  };
 
   function busy(message) {
     el.loading.textContent = message || '';
@@ -103,6 +108,13 @@
 
   function pickService(svc) {
     state.service = svc;
+    document.getElementById('home-notice').hidden = !svc.requires_review;
+    var addr = document.getElementById('address-field');
+    addr.hidden = !svc.needs_address;
+    addr.querySelector('textarea').required = Boolean(svc.needs_address);
+    document.getElementById('postcode-field').hidden = !svc.needs_address;
+    document.getElementById('travel-line').hidden = true;
+    state.travel = null;
     state.from = todayKey();
     state.days = 14;
     el.whenIntro.textContent = svc.name + ', ' + svc.duration_min + ' minutes, ' + money(svc.price_pence) + '.';
@@ -157,6 +169,49 @@
     return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/London' }).format(new Date(ms));
   }
 
+  // ---- travel, for home visits ---------------------------------------------
+
+  var travelLine = document.getElementById('travel-line');
+
+  function priceTravel() {
+    var input = document.querySelector('input[name="postcode"]');
+    var postcode = (input.value || '').trim();
+    if (!state.service || !state.service.needs_address || postcode.length < 5) {
+      travelLine.hidden = true;
+      state.travel = null;
+      return;
+    }
+
+    travelLine.hidden = false;
+    travelLine.textContent = 'Working out the travel…';
+
+    api('/api/travel-quote?postcode=' + encodeURIComponent(postcode)).then(function (q) {
+      state.travel = q;
+      var total = state.service.price_pence + q.pence;
+      travelLine.classList.remove('is-problem');
+      travelLine.textContent = q.pence
+        ? q.miles + ' miles from Hanham. ' + (q.miles - q.chargeable_miles) + ' included, '
+          + q.chargeable_miles + ' charged at 45p — travel ' + money(q.pence)
+          + ', so ' + money(total) + ' altogether.'
+        : q.miles + ' miles from Hanham, which is inside the five I include — no travel charge. '
+          + money(total) + ' altogether.';
+    }).catch(function (err) {
+      state.travel = null;
+      travelLine.classList.add('is-problem');
+      travelLine.textContent = err.message;
+    });
+  }
+
+  var travelTimer;
+  document.addEventListener('input', function (event) {
+    if (event.target.name !== 'postcode') return;
+    clearTimeout(travelTimer);
+    travelTimer = setTimeout(priceTravel, 500);
+  });
+  document.addEventListener('change', function (event) {
+    if (event.target.name === 'postcode') { clearTimeout(travelTimer); priceTravel(); }
+  });
+
   // ---- step 3: details -----------------------------------------------------
 
   el.form.addEventListener('submit', function (event) {
@@ -170,6 +225,8 @@
       name: (data.get('name') || '').trim(),
       email: (data.get('email') || '').trim(),
       phone: (data.get('phone') || '').trim(),
+      address: (data.get('address') || '').trim(),
+      postcode: (data.get('postcode') || '').trim(),
       notes: (data.get('notes') || '').trim(),
       website: data.get('website') || '',
     };
@@ -177,6 +234,11 @@
     if (payload.name.length < 2) return showFormError('Please give your name.');
     if (!/^[^@\s]+@[^@\s.]+\.[^@\s]{2,}$/.test(payload.email)) {
       return showFormError('That email address does not look right.');
+    }
+    if (state.service.needs_address) {
+      if (payload.postcode.length < 5) return showFormError('Please give the postcode for the visit.');
+      if (payload.address.length < 6) return showFormError('Please give the address for the visit.');
+      if (!state.travel) return showFormError('I could not price the travel for that postcode. Check it and try again.');
     }
 
     el.confirm.disabled = true;
@@ -187,13 +249,12 @@
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(payload),
     }).then(function (res) {
-      busy('');
-      document.getElementById('done-detail').textContent =
-        state.service.name + ', ' + dayLabel(todayKeyFor(state.start)) + ' at ' + timeLabel(state.start)
-        + '. St Anne’s House, St Anne’s Road, Brislington, BS4 4AB.';
-      document.getElementById('done-ref').textContent =
-        'Reference ' + res.ref + '. A confirmation is on its way to ' + payload.email + '.';
-      show('done');
+      busy('Taking you to the payment page…');
+      // res.amount_pence is what will actually be charged — the server prices
+      // the travel again rather than trusting the figure shown on screen.
+      // The slot is held from this moment, and released again if payment is
+      // never completed — so leaving the tab open does not block anyone.
+      window.location.href = res.checkout_url;
     }).catch(function (err) {
       busy('');
       el.confirm.disabled = false;
@@ -205,6 +266,10 @@
       }
     });
   });
+
+  // Clear a complaint as soon as the person starts addressing it, rather than
+  // leaving a stale error sitting under a field they have already fixed.
+  el.form.addEventListener('input', function () { el.formError.hidden = true; });
 
   function showFormError(message) {
     el.formError.textContent = message;
@@ -263,11 +328,64 @@
     });
   }
 
-  var manageToken = new URLSearchParams(location.search).get('manage');
+  var params = new URLSearchParams(location.search);
+  var manageToken = params.get('manage');
+
   if (manageToken && /^[a-f0-9]{32}$/.test(manageToken)) {
-    manageView(manageToken);
+    if (params.get('paid')) settleReturn(manageToken, params.get('simulated'));
+    else manageView(manageToken);
   } else {
     show('service');
     loadServices();
+  }
+
+  /* Back from the payment page. With Stripe connected the webhook does the
+   * confirming, so we poll briefly rather than trust the redirect — the redirect
+   * only means the customer came back, not that the money arrived. Without
+   * Stripe, the simulated endpoint stands in for the webhook. */
+  function settleReturn(token, simulated) {
+    show('done');
+    var head = document.getElementById('done-head');
+    var detail = document.getElementById('done-detail');
+    head.textContent = 'Confirming your payment…';
+    detail.textContent = 'One moment.';
+
+    var finish = function (b) {
+      var paid = b.payment_status === 'paid' || b.payment_status === 'simulated';
+      if (!paid) {
+        head.textContent = 'Payment not completed';
+        detail.textContent = 'Nothing has been taken. You can start again, or email hello@gliskmassage.co.uk and I will sort it out.';
+        return;
+      }
+      var reviewing = b.status === 'awaiting_review';
+      head.textContent = reviewing ? 'Thank you — that\u2019s paid.' : 'You\u2019re booked in.';
+      detail.textContent = reviewing
+        ? 'I\u2019ll be in touch shortly to check a few details before the visit. If I can\u2019t come, you\u2019re refunded in full.'
+        : b.service_name + ', ' + dayLabel(todayKeyFor(b.start_utc)) + ' at ' + timeLabel(b.start_utc)
+          + '. St Anne\u2019s House, St Anne\u2019s Road, Brislington, BS4 4AB.';
+      document.getElementById('done-ref').textContent =
+        'Reference ' + b.ref + '. A confirmation email is on its way.'
+        + (b.payment_status === 'simulated' ? ' (Test payment — no money was taken.)' : '');
+    };
+
+    var start = simulated
+      ? api('/api/simulate-payment', {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ manage_token: token }),
+        })
+      : Promise.resolve();
+
+    start.then(function () { return poll(0); }).catch(function (err) {
+      head.textContent = 'Something went wrong';
+      detail.textContent = err.message + ' Please email hello@gliskmassage.co.uk with your name and the time you wanted.';
+    });
+
+    function poll(attempt) {
+      return api('/api/manage/' + token).then(function (data) {
+        var b = data.booking;
+        if (b.payment_status !== 'unpaid' || attempt >= 6) return finish(b);
+        return new Promise(function (r) { setTimeout(r, 1000); }).then(function () { return poll(attempt + 1); });
+      });
+    }
   }
 })();

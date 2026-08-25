@@ -15,8 +15,12 @@ const jsonOf = async res => [res.status, await res.json()];
 
 // services
 let [st, body] = await jsonOf(await call('/api/services'));
-check('GET /api/services', st === 200 && body.services.length === 4, `${st}, ${body.services?.length} services`);
-const service = body.services[0];
+check('GET /api/services', st === 200 && body.services.length === 6, `${st}, ${body.services?.length} services`);
+check('four clinic treatments and two home visits',
+  body.services.filter(s => s.location === 'clinic').length === 4 &&
+  body.services.filter(s => s.location === 'home').length === 2);
+// the rest of this file exercises the clinic path, which needs no address
+const service = body.services.find(s => s.location === 'clinic');
 
 // slots
 [st, body] = await jsonOf(await call(`/api/slots?service=${service.id}&days=21`));
