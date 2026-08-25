@@ -55,9 +55,12 @@ nav{position:sticky;top:0;z-index:50;background:rgba(250,246,240,.92);
 .logo span{color:var(--gleam)}
 .nav-links{display:flex;gap:24px;align-items:center}
 .nav-links a{font-family:var(--sans);font-size:13.5px;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--ink-soft);text-decoration:none}
-.nav-links a:hover,.nav-links a:focus{color:var(--gleam-deep)}
-.nav-links a[aria-current="page"]{color:var(--gleam-deep);border-bottom:1px solid var(--gleam)}
+  text-transform:uppercase;text-decoration:none}
+/* Colour the plain links only. A bare `.nav-links a` colour rule outranks
+   `.btn` on specificity, which left the Book button dark-on-dark. */
+.nav-links a:not(.btn){color:var(--ink-soft)}
+.nav-links a:not(.btn):hover,.nav-links a:not(.btn):focus{color:var(--gleam-deep)}
+.nav-links a:not(.btn)[aria-current="page"]{color:var(--gleam-deep);border-bottom:1px solid var(--gleam)}
 @media(max-width:860px){.nav-links a:not(.btn){display:none}}
 
 /* -------------------------------------------------------------- button -- */
@@ -110,6 +113,8 @@ strong{font-weight:600}
 /* -------------------------------------------------------------- cards --- */
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
 .cards-3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.cards-4{grid-template-columns:repeat(2,1fr)}
+@media(max-width:620px){.cards-4{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--line);padding:32px 30px;
   display:flex;flex-direction:column;position:relative}
 .card .price{font-family:var(--sans);color:var(--gleam-deep);font-size:15px;
