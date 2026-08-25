@@ -152,13 +152,21 @@ the site combined — and right now it's the only genuinely missing piece.
 
 ## The logo
 
-`assets/img/logo.svg` is the only place the logo lives. The nav and the footer on
-every page point at that one file, sized by CSS — so replacing the logo is a
-single file swap, with no HTML to touch.
+`assets/img/logo.png` is the only place the logo lives. The nav and the footer on
+every page point at that one file, sized by CSS, so replacing it is a single
+swap with no HTML to touch.
 
-**The file currently in that slot is a stand-in.** The sun mark is right; the
-GLISK lettering is set in a serif stack rather than the real lettering, which
-needs the original artwork. Drop the supplied file in over the top of it, keeping
-the name `logo.svg`. If what you have is a PNG rather than an SVG, save it at
-about 960px wide on a transparent background, call it `logo.png`, and change the
-two `src` attributes — `grep -rn 'logo.svg' *.html` finds them.
+It is 960×480 on a transparent background, saved as a 256-colour PNG — 20KB,
+against 510KB for the artwork as supplied. Flat two-colour marks quantise
+extremely well, and this one loads on every page, so it is worth doing. To
+regenerate from a new original:
+
+```python
+from PIL import Image
+im = Image.open('new-logo.png')
+im.thumbnail((960, 960), Image.LANCZOS)
+im.quantize(colors=256, method=Image.FASTOCTREE).save('assets/img/logo.png', 'PNG', optimize=True)
+```
+
+Check the result zoomed in before committing — quantisation is what would show
+first on the antialiased edges of the sun.
