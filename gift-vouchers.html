@@ -100,12 +100,13 @@
         <div class="amount">Any</div>
         <div class="what">Custom amount</div>
         <p>Anything from £20 to £500. Useful if you are putting in what you can, or if several of you are chipping in on one voucher.</p>
-        <button type="button" class="btn" data-voucher="custom">Choose an amount</button>
+        <a href="#voucher-buy" class="btn">Choose an amount</a>
       </div>
     </div>
 
-    <div id="voucher-buy" hidden style="margin-top:40px">
+    <div id="voucher-buy" style="margin-top:40px">
       <h3 id="voucher-heading">Your voucher</h3>
+      <p class="sec-intro">Pick a tier above to fill this in, or just type the amount you want.</p>
       <form class="bookform" id="voucher-form" novalidate>
         <label>Amount
           <input type="text" name="amount" inputmode="decimal" required>
