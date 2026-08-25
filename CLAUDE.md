@@ -41,11 +41,16 @@ someone presses play). `book.html` degrades to a `<noscript>` block pointing at
 email and phone, and the posts fall back to native controls. If you find yourself
 adding a fifth, question it hard.
 
-**The Instagram posts are self-hosted**, not embedded. Meta's embed script sets
-cookies, which would oblige the whole site to carry a cookie banner under PECR.
-Videos live in `assets/video/`, posters in `assets/img/`, and a native `<video>`
-with a `poster` does the preview-and-play on its own. Don't swap this back to an
-embed without accepting the banner that comes with it.
+**There is no Instagram feed on the site.** The home page links to the profile and
+stops there. A previous version played the posts in click-to-load embeds; it was
+taken out on 25 Aug 2026 while the real stills were still missing — see the
+commit "Take the Instagram posts off the home page" if it ever comes back.
+
+Note what it cost, because it is the reason the site has no cookie banner: Meta's
+`embed.js`, or an `instagram.com/.../embed/` iframe placed straight into the
+markup, contacts Meta on page load and obliges a consent banner site-wide under
+PECR. Only load either one in response to a click, or self-host the videos in
+`assets/video/` behind a native `<video poster>`, which contacts nobody at all.
 
 **Design tokens live in `:root`** at the top of `style.css`. Change colours and fonts
 there, never inline. If you find yourself writing a hex code outside `:root`, stop.
@@ -54,6 +59,15 @@ there, never inline. If you find yourself writing a hex code outside `:root`, st
 no build step. If you change one, change them all — check with:
 `grep -c 'nav-links' *.html`, which should return 1 per page. `admin.html` is the
 one exception: it is private and carries no nav.
+
+**Guest spots expire by themselves.** A `.place` card on `guest-spots.html` with
+`data-until="YYYY-MM-DD"` disappears from "Coming up" on the morning after that
+date. The Worker does it on the way out (`worker/guestspots.js`), not the
+browser — so there is no fifth script, no card jumping about after load, and
+crawlers see the same page as everyone else. It only ever removes; writing the
+spot up in "Where I've been" is a person's job, because those entries carry a
+photograph. If anything about the markup is unexpected the page is served
+untouched, so the worst case is a stale entry rather than a broken page.
 
 **Editing prices means editing four places:** the page itself, the JSON-LD block in
 `index.html`, `worker/seed.sql`, and any mention on other pages. Search for the

@@ -128,12 +128,10 @@ Done and working:
 
 Waiting on files or answers from Fleur:
 
-- [ ] `assets/video/post-1.mp4` and `post-2.mp4` — the two Instagram videos. The
-      cards on the home page are built and are showing placeholder stills.
-- [ ] Real stills for those posts, plus a line of copy for each. All three
-      currently read "One line about what this one is."
-- [ ] Photos for the Gather Round and Campwell Woods entries on `guest-spots.html`.
-- [ ] Dates and locations for the guest spots.
+- [ ] Decide whether the Instagram posts come back on the home page. They were
+      removed on 25 Aug 2026 because all three stills were still placeholders;
+      the cards, the copy and the click-to-load embed are in the history.
+- [ ] Locations and rough dates for the past guest spots (Gather Round, Campwell).
 - [ ] A day rate and half-day rate for event work, for `guest-spots.html`.
 - [ ] A privacy notice and a retention period for the health information the
       booking form collects. This one is a legal requirement, not a nicety.
@@ -152,7 +150,6 @@ Every one of these has a `.note` block on the page it belongs to:
 - [ ] Remove the `noindex` tag from `book.html`
 - [ ] Put Cloudflare Access in front of `/admin.html` if you want it properly locked
 - [ ] Cancel the Booksy subscription once bookings are coming through the site
-- [ ] Add a real photo of Fleur, replacing both `.portrait` divs
 - [ ] Add `assets/img/og.jpg` (1200×630) or link previews will be blank
 - [ ] Confirm qualifications on `about.html`
 - [ ] Wire up the three Square voucher links on `gift-vouchers.html`
