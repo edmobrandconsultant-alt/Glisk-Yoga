@@ -1,0 +1,13 @@
+# Preview-only deploy config. The production site is Cloudflare *Pages*
+# (see README.md); this publishes a throwaway copy to workers.dev so the
+# site can be viewed and shared before the domain exists.
+#
+#   npx wrangler deploy
+#
+# Serves the repo as static assets. No build step, no dependencies.
+
+name = "glisk-preview"
+compatibility_date = "2026-01-01"
+
+[assets]
+directory = "./"
