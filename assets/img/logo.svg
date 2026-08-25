@@ -1,31 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 232" role="img" aria-label="Glisk — Massage &amp; Yoga">
   <title>Glisk — Massage &amp; Yoga</title>
   <!--
-    STAND-IN. The sun mark is reproduced faithfully; the GLISK wordmark is set in
-    a serif stack rather than the real lettering, which needs the original file.
-    Replace this whole file with the supplied artwork — nothing else needs to
-    change, the nav and footer both point here.
+    STAND-IN, awaiting the supplied artwork.
+    The sun mark and the colours are matched to the real logo; the GLISK
+    lettering is a serif stack, not the real lettering, which needs the original
+    file. Replace this whole file — the nav and footer on every page point here.
   -->
-  <g fill="#C0842B">
-    <!-- five rays, radiating from the centre of the sun at (240,150) -->
-    <ellipse cx="240" cy="64" rx="7.5" ry="25"/>
-    <ellipse cx="240" cy="64" rx="7" ry="23" transform="rotate(25 240 150)"/>
-    <ellipse cx="240" cy="64" rx="7" ry="23" transform="rotate(-25 240 150)"/>
-    <ellipse cx="240" cy="70" rx="6.5" ry="20" transform="rotate(50 240 150)"/>
-    <ellipse cx="240" cy="70" rx="6.5" ry="20" transform="rotate(-50 240 150)"/>
-    <!-- the sun itself: a half disc sitting on the baseline of the wordmark -->
-    <path d="M182 150 a58 58 0 0 1 116 0 Z"/>
+  <defs>
+    <!-- one ray: a teardrop, tapering to a point at the base -->
+    <path id="ray" d="M0 0 C7.5 -19 10 -30 0 -44 C-10 -30 -7.5 -19 0 0 Z"/>
+  </defs>
+
+  <g fill="#BF8129">
+    <g transform="translate(240 106)">
+      <use href="#ray" transform="translate(0 -46)"/>
+      <use href="#ray" transform="rotate(26) translate(0 -46)"/>
+      <use href="#ray" transform="rotate(-26) translate(0 -46)"/>
+      <use href="#ray" transform="rotate(52) translate(0 -42) scale(.88)"/>
+      <use href="#ray" transform="rotate(-52) translate(0 -42) scale(.88)"/>
+    </g>
+    <!-- the sun: a half disc sitting on the baseline of the wordmark -->
+    <path d="M184 152 a56 56 0 0 1 112 0 Z"/>
   </g>
 
-  <text x="240" y="150" text-anchor="middle" fill="#231F1C"
+  <text x="240" y="152" text-anchor="middle" fill="#2B2119"
         font-family="'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif"
-        font-size="112" font-weight="600" letter-spacing="2">GLISK</text>
+        font-size="116" font-weight="700" letter-spacing="1">GLISK</text>
 
-  <g fill="#C0842B">
-    <rect x="30" y="196" width="86" height="4" rx="2"/>
-    <rect x="364" y="196" width="86" height="4" rx="2"/>
-    <text x="240" y="207" text-anchor="middle"
+  <g fill="#BF8129">
+    <rect x="26" y="198" width="92" height="5" rx="2.5"/>
+    <rect x="362" y="198" width="92" height="5" rx="2.5"/>
+    <text x="240" y="210" text-anchor="middle"
           font-family="'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif"
-          font-size="28" font-weight="600" letter-spacing="6">MASSAGE &amp; YOGA</text>
+          font-size="27" font-weight="700" letter-spacing="6.5">MASSAGE &amp; YOGA</text>
   </g>
 </svg>
