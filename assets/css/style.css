@@ -49,10 +49,17 @@ img{max-width:100%;height:auto;display:block}
 nav{position:sticky;top:0;z-index:50;background:rgba(250,246,240,.92);
   backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .nav-in{display:flex;align-items:center;justify-content:space-between;gap:20px;
-  padding:14px var(--gutter);max-width:var(--max);margin:0 auto}
-.logo{font-size:23px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink);
-  text-decoration:none;font-weight:500;white-space:nowrap}
-.logo span{color:var(--gleam)}
+  padding:9px var(--gutter);max-width:var(--max);margin:0 auto}
+/* The logo is a stacked lockup — wordmark over a tagline — so it needs real
+   height to stay legible. The nav's vertical padding is pulled in to keep the
+   bar a sensible depth at that size. */
+.logo{display:block;line-height:0;text-decoration:none;flex:0 0 auto}
+.logo img{width:auto;height:62px;display:block}
+@media(max-width:520px){.logo img{height:46px}}
+
+/* footer lockup: the mark sits above the line of small print */
+.foot-brand{display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.foot-brand img{width:auto;height:58px;display:block}
 .nav-links{display:flex;gap:24px;align-items:center}
 .nav-links a{font-family:var(--sans);font-size:13.5px;letter-spacing:.06em;
   text-transform:uppercase;text-decoration:none}

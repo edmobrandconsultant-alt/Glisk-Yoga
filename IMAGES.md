@@ -148,3 +148,17 @@ If only one photo ever gets done, make it the portrait of Fleur.
 People booking a massage are choosing a person to be alone in a room with. A warm,
 real photograph of the therapist does more for conversion than every word of copy on
 the site combined — and right now it's the only genuinely missing piece.
+
+
+## The logo
+
+`assets/img/logo.svg` is the only place the logo lives. The nav and the footer on
+every page point at that one file, sized by CSS — so replacing the logo is a
+single file swap, with no HTML to touch.
+
+**The file currently in that slot is a stand-in.** The sun mark is right; the
+GLISK lettering is set in a serif stack rather than the real lettering, which
+needs the original artwork. Drop the supplied file in over the top of it, keeping
+the name `logo.svg`. If what you have is a PNG rather than an SVG, save it at
+about 960px wide on a transparent background, call it `logo.png`, and change the
+two `src` attributes — `grep -rn 'logo.svg' *.html` finds them.
