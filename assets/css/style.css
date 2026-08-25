@@ -188,6 +188,23 @@ ol.steps li strong{display:block;color:var(--ink);font-weight:400;font-size:19px
   margin:-26px -26px 20px;aspect-ratio:8/5;object-fit:cover;
   border-bottom:1px solid var(--line)}
 
+/* ------------------------------------------------------------- quotes --- */
+/* A carousel with no JavaScript in it: a scroll-snapping row. Swipes on a
+   phone, scrolls or arrow-keys on a desktop, and works with scripts off. */
+.quotes{display:flex;gap:22px;overflow-x:auto;align-items:flex-start;
+  scroll-snap-type:x proximity;padding-bottom:16px}
+.quotes:focus-visible{outline:2px solid var(--gleam);outline-offset:6px}
+.quote{flex:0 0 min(380px,80vw);scroll-snap-align:start;margin:0;
+  background:var(--card);border:1px solid var(--line);padding:30px}
+.quote blockquote{margin:0}
+.quote p{color:var(--ink-soft);font-size:16.5px}
+.quote p + p{margin-top:14px}
+.quote figcaption{margin-top:22px;padding-top:16px;border-top:1px solid var(--line);
+  font-family:var(--sans);font-size:13.5px;letter-spacing:.04em;color:var(--ink)}
+.quote figcaption span{display:block;margin-top:6px;font-size:11px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+@media(prefers-reduced-motion:no-preference){.quotes{scroll-behavior:smooth}}
+
 /* ---------------------------------------------------------- policy box -- */
 .policy{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--gleam);
   padding:30px 32px;max-width:720px}
